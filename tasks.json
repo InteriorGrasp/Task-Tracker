@@ -1,16 +1,23 @@
 [
     {
         "id": 1,
-        "description": "Buy Chocolate",
-        "status": "done",
-        "createdAt": "2025-01-27T20:05:30.472979",
-        "updatedAt": "2025-01-27T22:17:19.682892"
+        "description": "Watch Breaking Bad",
+        "status": "todo",
+        "createdAt": "January 28, 2025, 05:20 AM",
+        "updatedAt": "January 28, 2025, 05:23 AM"
     },
     {
         "id": 2,
-        "description": "Watch breaking bad",
+        "description": "Buy Chocolate",
+        "status": "done",
+        "createdAt": "January 28, 2025, 05:23 AM",
+        "updatedAt": "January 28, 2025, 05:26 AM"
+    },
+    {
+        "id": 3,
+        "description": "Play LOL",
         "status": "todo",
-        "createdAt": "2025-01-27T22:13:49.695988",
-        "updatedAt": "2025-01-27T22:13:49.695988"
+        "createdAt": "January 28, 2025, 05:25 AM",
+        "updatedAt": "January 28, 2025, 05:25 AM"
     }
 ]
