@@ -1,9 +1,16 @@
 [
     {
         "id": 1,
-        "description": "Buy groceries",
-        "status": "todo",
+        "description": "Buy Chocolate",
+        "status": "done",
         "createdAt": "2025-01-27T20:05:30.472979",
-        "updatedAt": "2025-01-27T20:05:30.472979"
+        "updatedAt": "2025-01-27T22:17:19.682892"
+    },
+    {
+        "id": 2,
+        "description": "Watch breaking bad",
+        "status": "todo",
+        "createdAt": "2025-01-27T22:13:49.695988",
+        "updatedAt": "2025-01-27T22:13:49.695988"
     }
 ]

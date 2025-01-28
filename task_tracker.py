@@ -11,8 +11,11 @@ def load_tasks():
     """Load tasks from the JSON file."""
     if not TASKS_FILE.exists():
         return []
-    with open(TASKS_FILE, "r") as file:
-        return json.load(file)
+    try:
+        with open(TASKS_FILE, "r") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+        return []
 
 
 def save_tasks(tasks):
@@ -78,39 +81,88 @@ def list_tasks(filter_status=None):
         tasks = [task for task in tasks if task["status"] == filter_status]
     if not tasks:
         print("No tasks found.")
+        return
     for task in tasks:
         print(f"[{task['id']}] {task['description']} - {task['status']} (Created: {task['createdAt']})")
 
+def show_help():
+    """Show help for available commands."""
+    help_text = """
+Task Tracker - Command List:
+
+1. add <description>             Add a new task.
+2. update <id> <description>     Update an existing task's description.
+3. delete <id>                   Delete a task by its ID.
+4. mark-in-progress <id>         Mark a task as 'in-progress'.
+5. mark-done <id>                Mark a task as 'done'.
+6. list [status]                 List tasks (optionally filtered by status: 'todo', 'in-progress', 'done').
+    """
+    print(help_text)
+
 
 def main():
-    """Main CLI function."""
     if len(sys.argv) < 2:
-        print("Usage: task-cli <command> [options]")
+        print("Usage: python task_tracker.py <command> [arguments]")
         return
 
-    command = sys.argv[1]
+    command = sys.argv[1].lower()  # Convert the command to lowercase
+    arguments = sys.argv[2:]
+
     if command == "add":
-        description = " ".join(sys.argv[2:])
+        if len(arguments) < 1:
+            print("Error: Missing task description.")
+            return
+        description = " ".join(arguments)  # Handle multi-word descriptions
         add_task(description)
     elif command == "update":
-        task_id = int(sys.argv[2])
-        description = " ".join(sys.argv[3:])
-        update_task(task_id, description)
+        if len(arguments) < 2:
+            print("Error: Missing task ID or description.")
+            return
+        try:
+            task_id = int(arguments[0])
+            description = " ".join(arguments[1:])
+            update_task(task_id, description)
+        except ValueError:
+            print("Error: Task ID must be an integer.")
     elif command == "delete":
-        task_id = int(sys.argv[2])
-        delete_task(task_id)
+        if len(arguments) < 1:
+            print("Error: Missing task ID.")
+            return
+        try:
+            task_id = int(arguments[0])
+            delete_task(task_id)
+        except ValueError:
+            print("Error: Task ID must be an integer.")
     elif command == "mark-in-progress":
-        task_id = int(sys.argv[2])
-        mark_task(task_id, "in-progress")
+        if len(arguments) < 1:
+            print("Error: Missing task ID.")
+            return
+        try:
+            task_id = int(arguments[0])
+            mark_task(task_id, "in-progress")
+        except ValueError:
+            print("Error: Task ID must be an integer.")
     elif command == "mark-done":
-        task_id = int(sys.argv[2])
-        mark_task(task_id, "done")
+        if len(arguments) < 1:
+            print("Error: Missing task ID.")
+            return
+        try:
+            task_id = int(arguments[0])
+            mark_task(task_id, "done")
+        except ValueError:
+            print("Error: Task ID must be an integer.")
     elif command == "list":
-        filter_status = sys.argv[2] if len(sys.argv) > 2 else None
-        list_tasks(filter_status)
+        if len(arguments) == 0:
+            list_tasks()
+        else:
+            status = arguments[0].lower()
+            list_tasks(status)
+    elif command == "help":
+        show_help()
     else:
-        print("Unknown command. Available commands: add, update, delete, mark-in-progress, mark-done, list")
+        print(f"Unknown command: {command}.\nAvailable commands: add, update, delete, mark-in-progress, mark-done, list.")
 
 
 if __name__ == "__main__":
     main()
+ 
