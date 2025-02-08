@@ -1,10 +1,17 @@
 import sys
 import json
+from colorama import Fore, Style
 from datetime import datetime
 from pathlib import Path
 
 # Define the file path
 TASKS_FILE = Path("tasks.json")
+
+STATUS_COLORS = {
+    "todo": Fore.RED,
+    "in-progress": Fore.YELLOW,
+    "done": Fore.GREEN,
+}
 
 
 def load_tasks():
@@ -22,15 +29,24 @@ def save_tasks(tasks):
 
 
 def format_datetime(dt_str):
-    """Format the datetime string for better readability."""
-    dt = datetime.fromisoformat(dt_str)
-    return dt.strftime("%B %d, %Y, %I:%M %p") 
+    """Convert ISO datetime string to a readable format."""
+    try:
+        dt = datetime.fromisoformat(dt_str)
+        return dt.strftime("%B %d, %Y, %I:%M %p")  # Example: January 28, 2025, 05:20 AM
+    except ValueError:
+        return dt_str  # Return as-is if it's already formatted incorrectly
+
+
+def get_current_iso_time():
+    """Return the current time in ISO format."""
+    return datetime.now().isoformat()
+
 
 def add_task(description):
     """Add a new task."""
     tasks = load_tasks()
     task_id = len(tasks) + 1
-    current_time = format_datetime(datetime.now().isoformat())
+    current_time = get_current_iso_time()
     new_task = {
         "id": task_id,
         "description": description,
@@ -49,7 +65,7 @@ def update_task(task_id, new_description):
     for task in tasks:
         if task["id"] == task_id:
             task["description"] = new_description
-            task["updatedAt"] = format_datetime(datetime.now().isoformat())
+            task["updatedAt"] = get_current_iso_time()
             save_tasks(tasks)
             print(f"Task updated successfully (ID: {task_id})")
             return
@@ -73,7 +89,7 @@ def mark_task(task_id, status):
     for task in tasks:
         if task["id"] == task_id:
             task["status"] = status
-            task["updatedAt"] = format_datetime(datetime.now().isoformat())
+            task["updatedAt"] = get_current_iso_time()
             save_tasks(tasks)
             print(f"Task marked as {status} (ID: {task_id})")
             return
@@ -85,14 +101,17 @@ def list_tasks(filter_status=None):
     tasks = load_tasks()
     if filter_status:
         tasks = [task for task in tasks if task["status"] == filter_status]
+
     if not tasks:
         print("No tasks found.")
         return
+
     for task in tasks:
         created_at = format_datetime(task["createdAt"])
         updated_at = format_datetime(task["updatedAt"])
-        print(f"[{task['id']}] {task['description']} - {task['status']} "
-              f"(Created: {created_at}, Updated: {updated_at})")
+        status_color = STATUS_COLORS.get(task["status"], Fore.WHITE)
+        print(f"{status_color}[{task['id']}] {task['description']} - {task['status']} "
+              f"(Created: {created_at}, Updated: {updated_at}){Style.RESET_ALL}")
 
 
 def main():
